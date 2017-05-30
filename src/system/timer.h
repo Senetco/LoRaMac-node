@@ -31,8 +31,29 @@ typedef struct TimerEvent_s
  * \brief Timer time variable definition
  */
 #ifndef TimerTime_t
-typedef uint32_t TimerTime_t;
+typedef uint64_t TimerTime_t;
 #endif
+
+
+// Structure holding an interval broken down into seconds and milliseconds
+typedef struct TimeSpec{
+	TimerTime_t tv_sec;
+	TimerTime_t tv_msec;
+} TimeSpec_t;
+
+/*!
+ * \brief Enables/Disables low power timers usage
+ *
+ * \param [IN] enable [true]RTC timer used, [false]Normal timer used
+ */
+void TimerSetLowPowerEnable( bool enable );
+
+/*!
+ * \brief Initializes the timer object
+ *
+ * \retval enable [true]RTC timer used, [false]Normal timer used
+ */
+bool TimerGetLowPowerEnable( void );
 
 /*!
  * \brief Initializes the timer object
@@ -86,25 +107,20 @@ void TimerSetValue( TimerEvent_t *obj, uint32_t value );
  */
 TimerTime_t TimerGetCurrentTime( void );
 
-/*!
- * \brief Return the Time elapsed since a fix moment in Time
- *
- * \param [IN] savedTime    fix moment in Time
- * \retval time             returns elapsed time
- */
-TimerTime_t TimerGetElapsedTime( TimerTime_t savedTime );
-
-/*!
- * \brief Return the Time elapsed since a fix moment in Time
- *
- * \param [IN] eventInFuture    fix moment in the future
- * \retval time             returns difference between now and future event
- */
-TimerTime_t TimerGetFutureTime( TimerTime_t eventInFuture );
+TimerTime_t TimerGetElapsedTime( TimerTime_t time );
 
 /*!
  * \brief Manages the entry into ARM cortex deep-sleep mode
  */
 void TimerLowPowerHandler( void );
+
+/*!
+ * \brief Return monotonic time
+ *
+ * \param [IN] ts  timespec
+ * \retval         returns zero if montonic time returned,
+ *                 returns nonzero if montonic time value cannot be returned
+ */
+int32_t TimerMonotonicTime(TimeSpec_t *ts);
 
 #endif  // __TIMER_H__

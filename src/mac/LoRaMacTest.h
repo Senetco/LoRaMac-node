@@ -66,6 +66,28 @@ void LoRaMacTestSetMic( uint16_t txPacketCounter );
  */
 void LoRaMacTestSetDutyCycleOn( bool enable );
 
+
+/*!
+ * \brief   Set the maximum transmit duty cycle  
+ *
+ * \details This is a test function. It shall be used for testing purposes only.
+ *          Changing this attribute may lead to a non-conformance LoRaMac operation.
+ *
+ * \param   [IN] maxDCycle - The maximum end-device transmit duty cycle.  
+ *          The valid range for MaxDutyCyle is [0..15]. A value of 0 
+ *          corresponds to "no duty cycle limitation". A value of 255 
+ *          turns the device off.
+ */
+bool LoRaMacTestSetMaxDCycle( uint8_t maxDCycle);
+
+
+/*!
+ * \brief   Get the maximum transmit duty cycle  
+ *
+ * \details This is a test function. It shall be used for testing purposes only.
+ */
+uint8_t LoRaMacTestGetMaxDCycle( );
+
 /*! \} defgroup LORAMACTEST */
 
 #endif // __LORAMACTEST_H__

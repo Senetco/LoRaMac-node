@@ -149,6 +149,34 @@
  */
 #define LORA_MAC_PUBLIC_SYNCWORD                    0x34
 
+
+/*!
+ * Sets the size of the Join Retransmission duty cycle 
+ * table
+ */
+#define JOIN_NB_RETRANSMISSION_DCYCLES 3
+
+/*! 
+ * Join Aggregated duty cycle during the first hour
+ */
+#ifndef JOIN_RETRANSMISSION_DCYCLE1   
+#define JOIN_RETRANSMISSION_DCYCLE1   { 3600, 36000 }
+#endif
+
+/*! 
+ * Join Aggregated duty cycle during the next 10 hours 
+ */
+#ifndef JOIN_RETRANSMISSION_DCYCLE2   
+#define JOIN_RETRANSMISSION_DCYCLE2   { 10*3600, 36000 }
+#endif
+
+/*! 
+ * Join Aggregated after the first 11 hours
+ */
+#ifndef JOIN_RETRANSMISSION_DCYCLE3   
+#define JOIN_RETRANSMISSION_DCYCLE3   { 24*3600, 8700 }
+#endif
+
  /*!
  * LoRaMac internal state
  */
@@ -555,6 +583,9 @@ typedef enum eLoRaMacEventInfoStatus
      * message integrity check failure
      */
     LORAMAC_EVENT_INFO_STATUS_MIC_FAIL,
+
+    LORAMAC_EVENT_INFO_STATUS_MAX
+
 }LoRaMacEventInfoStatus_t;
 
 /*!
@@ -1412,6 +1443,10 @@ typedef enum eLoRaMacStatus
      * Service not started - the device is switched off
      */
     LORAMAC_STATUS_DEVICE_OFF,
+    /*!
+     * Service not started - transmit duty cycle exceeded
+     */
+    LORAMAC_STATUS_TX_DCYCLE_EXCEEDED,
 }LoRaMacStatus_t;
 
 /*!
@@ -1452,6 +1487,18 @@ typedef struct sLoRaMacCallback
      */
     uint8_t ( *GetBatteryLevel )( void );
 }LoRaMacCallback_t;
+
+
+/*!
+ * LoRaMAC Retransmission  duty cylcle structure
+ * Used for Retransmission back-off duty cycle configuration 
+ */
+typedef struct sLoRaMacRetransmissionDCycle
+{
+    TimerTime_t period;       // Retransmission period in seconds 
+    TimerTime_t onAirTimeMax; // Max on air time in units returned by Radio.TimeOnAir()
+} LoRaMacRetransmissionDCycle_t;
+
 
 /*!
  * \brief   LoRaMAC layer initialization
@@ -1701,6 +1748,24 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest );
  *          \ref LORAMAC_STATUS_DEVICE_OFF.
  */
 LoRaMacStatus_t LoRaMacMcpsRequest( McpsReq_t *mcpsRequest );
+
+/*!
+ * \brief   Get LoRaMAC Join Request Retransmission Backoff time 
+ *
+ * \retval  Retransmission backoff time remaining until next 
+ *          join request can be sent 
+ */
+ TimerTime_t LoRaMacCalcJoinBackOff( );
+
+/*!
+ * \brief   LoRaMacGetMaxAppPayloadLength
+ *
+ * \retval  The maximum application payload length based on the current datarate 
+ *          and repeater support
+ *         
+ */
+uint8_t LoRaMacGetMaxAppPayloadLength();
+
 
 /*! \} defgroup LORAMAC */
 
